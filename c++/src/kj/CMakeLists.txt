@@ -188,6 +188,27 @@ if(NOT CAPNP_LITE)
   install(FILES ${kj-gzip_headers} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/kj/compat")
 endif()
 
+# kj-tls =======================================================================
+
+set(kj-tls_sources
+  compat/tls.c++
+  compat/readiness-io.c++
+)
+set(kj-tls_headers
+  compat/tls.h
+  compat/readiness-io.h
+)
+if(NOT CAPNP_LITE)
+  add_definitions(-DKJ_HAS_OPENSSL)
+  add_library(kj-tls ${kj-tls_sources})
+  add_library(CapnProto::kj-tls ALIAS kj-tls)
+  target_link_libraries(kj-tls PUBLIC kj-async kj)
+  # Ensure the library has a version set to match autotools build
+  set_target_properties(kj-tls PROPERTIES VERSION ${VERSION})
+  install(TARGETS kj-tls ${INSTALL_TARGETS_DEFAULT_ARGS})
+  install(FILES ${kj-tls_headers} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/kj/compat")
+endif()
+
 # Tests ========================================================================
 
 if(BUILD_TESTING)
